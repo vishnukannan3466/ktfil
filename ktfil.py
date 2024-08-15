@@ -1,6 +1,6 @@
 import cv2
 import streamlit as st
-from streamlit_webrtc import webrtc_streamer
+from streamlit_webrtc import webrtc_streamer, RTCConfiguration
 import numpy as np
 import av
 
@@ -47,9 +47,15 @@ def transform(frame: av.VideoFrame):
 
     return av.VideoFrame.from_ndarray(img, format="bgr24")
 
+# WebRTC configuration for better compatibility
+rtc_configuration = RTCConfiguration(
+    iceServers=[{"urls": ["stun:stun.l.google.com:19302"]}]
+)
+
 webrtc_streamer(
     key="streamer",
     video_frame_callback=transform,
     sendback_audio=False,
-    video_html_attrs={"playsinline": True, "controls": True}
+    video_html_attrs={"playsinline": True, "controls": True},
+    rtc_configuration=rtc_configuration
 )
