@@ -1,1 +1,5 @@
-﻿opencv-python streamlit streamlit-webrtc numpy av
+﻿opencv-python
+streamlit
+streamlit-webrtc
+numpy
+av
