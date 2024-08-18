@@ -1,6 +1,6 @@
 import cv2
 import streamlit as st
-from streamlit_webrtc import webrtc_streamer
+from streamlit_webrtc import webrtc_streamer, VideoProcessorBase, ClientSettings
 import numpy as np
 import av
 
@@ -71,4 +71,15 @@ webrtc_streamer(
     key="streamer",
     video_frame_callback=transform,
     sendback_audio=False,
+    media_stream_constraints={
+        "video": {"width": {"ideal": 640}, "height": {"ideal": 480}, "frameRate": {"ideal": 15}},
+        "audio": False,
+    },
+    client_settings=ClientSettings(
+        video_html_attrs={
+            "playsinline": True,
+            "controls": True,
+            "muted": True,
+        }
+    )
 )
