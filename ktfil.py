@@ -39,10 +39,9 @@ class VideoProcessor(VideoProcessorBase):
     
         # Apply Gaussian blur to the image
         blurred_img = cv2.GaussianBlur(img, (p["blur_radius"], p["blur_radius"]), 0)
-    
+
         # Ensure the noise pattern matches the image size
-        if noise_pattern.shape[:2] != img.shape[:2]:
-            noise_pattern = cv2.resize(noise_pattern, (width, height))
+        noise_pattern = cv2.resize(noise_pattern, (width, height))
 
         # Blend the blurred image with the fixed noise pattern using opacity
         tinted_blurred_img = cv2.addWeighted(blurred_img, p["opacity"], noise_pattern, 1 - p["opacity"], 0)
@@ -97,7 +96,7 @@ webrtc_streamer(
     video_frame_callback=VideoProcessor().transform,
     rtc_configuration=rtc_config,
     media_stream_constraints={
-        "video": {"width": {"ideal": 640}, "height": {"ideal": 480}, "frameRate": {"ideal": 60}},
+        "video": {"width": {"ideal": 640}, "height": {"ideal": 480}, "frameRate": {"ideal": 15}},
         "audio": False,
     }
 )
