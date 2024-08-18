@@ -1,6 +1,6 @@
-streamlit==1.37.1
-streamlit-webrtc==0.36.0
-opencv-python-headless==4.8.0.76
-numpy==1.25.2
-av==10.1.0
-psutil==5.9.4
+streamlit
+streamlit-webrtc
+opencv-python-headless
+numpy
+av
+psutil
