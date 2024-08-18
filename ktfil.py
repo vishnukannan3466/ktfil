@@ -19,35 +19,35 @@ class VideoProcessor(VideoProcessorBase):
         self.noise_pattern = None
 
     def generate_fixed_noise_pattern(self, height, width):
-        noise_intensity = 5  # Adjust this to control how strong the variation is
-        noise_pattern = np.random.normal(0, noise_intensity, (height, width, 3)).astype(np.uint8)
+        base_tint_color = 128
+        noise_intensity = 10  # Adjust this to control how strong the variation is
+        random_noise = np.random.randint(-noise_intensity, noise_intensity, (height, width, 3), dtype=np.int16)
+        noise_pattern = np.clip(base_tint_color + random_noise, 0, 255).astype(np.uint8)
         return noise_pattern
 
     def apply_filter_to_area(self, img, filter_type, noise_pattern):
         height, width, _ = img.shape
-
+    
         # Define parameters for each filter type
         params = {
             "Early Stage": {"opacity": 0.25, "blur_radius": 31},
             "Middle Stage": {"opacity": 0.2, "blur_radius": 71},
             "Late Stage": {"opacity": 0.12, "blur_radius": 101}
         }
-
+    
         p = params.get(filter_type)
-
-        # Apply Gaussian blur to the entire image
+    
+        # Apply Gaussian blur to the image
         blurred_img = cv2.GaussianBlur(img, (p["blur_radius"], p["blur_radius"]), 0)
-        
-        # Apply noise pattern after the blur
-        noisy_blurred_img = cv2.addWeighted(blurred_img, 1.0, noise_pattern, 0.5, 0)
-        
-        # Create a gray tint pattern
-        gray_tint = np.full_like(img, (128, 128, 128), dtype=np.uint8)
-        
-        # Apply gray tint with opacity
-        tinted_img = cv2.addWeighted(noisy_blurred_img, p["opacity"], gray_tint, 1 - p["opacity"], 0)
-        
-        return tinted_img
+    
+        # Ensure the noise pattern matches the image size
+        if noise_pattern.shape[:2] != img.shape[:2]:
+            noise_pattern = cv2.resize(noise_pattern, (width, height))
+
+        # Blend the blurred image with the fixed noise pattern using opacity
+        tinted_blurred_img = cv2.addWeighted(blurred_img, p["opacity"], noise_pattern, 1 - p["opacity"], 0)
+    
+        return tinted_blurred_img
 
     def transform(self, frame: av.VideoFrame):
         img = frame.to_ndarray(format="bgr24")
