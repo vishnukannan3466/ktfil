@@ -72,7 +72,7 @@ webrtc_streamer(
     video_frame_callback=transform,
     sendback_audio=False,
     media_stream_constraints={
-        "video": {"width": {"ideal": 640}, "height": {"ideal": 480}, "frameRate": {"ideal": 15}},
+        "video": {"width": {"ideal": 320}, "height": {"ideal": 240}, "frameRate": {"ideal": 15}},
         "audio": False,
     },
     client_settings=ClientSettings(
