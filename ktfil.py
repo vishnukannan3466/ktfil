@@ -1,6 +1,6 @@
 import cv2
 import streamlit as st
-from streamlit_webrtc import webrtc_streamer, VideoProcessorBase, ClientSettings
+from streamlit_webrtc import webrtc_streamer, VideoProcessorBase, RTCConfiguration
 import numpy as np
 import av
 import psutil
@@ -30,9 +30,9 @@ class VideoProcessor(VideoProcessorBase):
 
         # Define parameters for each filter type
         params = {
-            "Early Stage": {"opacity": 0.25, "blur_radius": 31, "outer_blur_radius": 21},
-            "Middle Stage": {"opacity": 0.2, "blur_radius": 71, "outer_blur_radius": 61},
-            "Late Stage": {"opacity": 0.12, "blur_radius": 101, "outer_blur_radius": 91}
+            "Early Stage": {"opacity": 0.25, "blur_radius": 31},
+            "Middle Stage": {"opacity": 0.2, "blur_radius": 71},
+            "Late Stage": {"opacity": 0.12, "blur_radius": 101}
         }
 
         p = params.get(filter_type)
@@ -83,19 +83,17 @@ def display_memory_usage():
 # Display memory usage on the Streamlit app
 display_memory_usage()
 
+# Use a simplified RTC configuration
+rtc_config = RTCConfiguration({
+    "iceServers": [{"urls": "stun:stun.l.google.com:19302"}]
+})
+
 webrtc_streamer(
     key="streamer",
     video_frame_callback=VideoProcessor().transform,
-    sendback_audio=False,
+    rtc_configuration=rtc_config,
     media_stream_constraints={
         "video": {"width": {"ideal": 320}, "height": {"ideal": 240}, "frameRate": {"ideal": 15}},
         "audio": False,
-    },
-    client_settings=ClientSettings(
-        video_html_attrs={
-            "playsinline": True,
-            "controls": True,
-            "muted": True,
-        }
-    )
+    }
 )
