@@ -3,6 +3,7 @@ import streamlit as st
 from streamlit_webrtc import webrtc_streamer, VideoProcessorBase, ClientSettings
 import numpy as np
 import av
+import psutil
 
 st.title("Keratitis Vision Simulator")
 
@@ -71,6 +72,16 @@ class VideoProcessor(VideoProcessorBase):
 
         return video_frame
 
+def display_memory_usage():
+    # Get the memory usage of the current process
+    process = psutil.Process()
+    mem_info = process.memory_info()
+    # Convert memory usage from bytes to GB
+    memory_usage_gb = mem_info.rss / (1024 ** 3)
+    st.write(f"Memory usage: {memory_usage_gb:.2f} GB")
+
+# Display memory usage on the Streamlit app
+display_memory_usage()
 
 webrtc_streamer(
     key="streamer",
