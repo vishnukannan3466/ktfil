@@ -25,36 +25,32 @@ class VideoProcessor(VideoProcessorBase):
         noise_pattern = np.clip(base_tint_color + random_noise, 0, 255).astype(np.uint8)
         return noise_pattern
 
-    def apply_filter_to_area(self, img, filter_type, noise_pattern):
+    def apply_filter_to_area(self, img, filter_type):
         height, width, _ = img.shape
-    
+
+        # Generate the noise pattern at the correct size for the current frame
+        noise_pattern = self.generate_fixed_noise_pattern(height, width)
+
         # Define parameters for each filter type
         params = {
             "Early Stage": {"opacity": 0.25, "blur_radius": 31, "outer_blur_radius": 21},
             "Middle Stage": {"opacity": 0.2, "blur_radius": 61, "outer_blur_radius": 51},
             "Late Stage": {"opacity": 0.15, "blur_radius": 91, "outer_blur_radius": 81}
         }
-    
+
         p = params.get(filter_type)
-    
+
         # Apply Gaussian blur to the image
         blurred_img = cv2.GaussianBlur(img, (p["blur_radius"], p["outer_blur_radius"]), 0)
 
-        # Ensure the noise pattern matches the image size without interpolation artifacts
-        noise_pattern = cv2.resize(noise_pattern, (width, height), interpolation=cv2.INTER_NEAREST)
-
-        # Blend the blurred image with the fixed noise pattern using opacity
+        # Blend the blurred image with the generated noise pattern using opacity
         tinted_blurred_img = cv2.addWeighted(blurred_img, p["opacity"], noise_pattern, 1 - p["opacity"], 0)
-    
+
         return tinted_blurred_img
 
     def transform(self, frame: av.VideoFrame):
         img = frame.to_ndarray(format="bgr24")
         height, width, _ = img.shape
-
-        # Generate the noise pattern if it hasn't been created yet
-        if self.noise_pattern is None or self.noise_pattern.shape[:2] != (height, width):
-            self.noise_pattern = self.generate_fixed_noise_pattern(height, width)
 
         split_point = int((line_position / 100) * width)
         left_half = img[:, :split_point]
@@ -62,7 +58,7 @@ class VideoProcessor(VideoProcessorBase):
 
         if filter != "Healthy Eye":
             # Apply filter to the right half of the image
-            right_half = self.apply_filter_to_area(img, filter, self.noise_pattern)[:, split_point:]
+            right_half = self.apply_filter_to_area(right_half, filter)
 
         img = np.concatenate((left_half, right_half), axis=1)
         cv2.line(img, (split_point, 0), (split_point, height), (255, 255, 255), 1)
