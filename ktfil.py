@@ -25,6 +25,10 @@ class VideoProcessor(VideoProcessorBase):
         noise_pattern = np.clip(base_tint_color + random_noise, 0, 255).astype(np.uint8)
         return noise_pattern
 
+    def splice_noise_pattern(self, noise_pattern, height, width):
+        # Crop (splice) the noise pattern to match the image size
+        return noise_pattern[:height, :width]
+
     def apply_filter_to_area(self, img, filter_type, noise_pattern):
         height, width, _ = img.shape
     
@@ -40,8 +44,8 @@ class VideoProcessor(VideoProcessorBase):
         # Apply Gaussian blur to the image
         blurred_img = cv2.GaussianBlur(img, (p["blur_radius"], p["outer_blur_radius"]), 0)
 
-        # Ensure the noise pattern matches the image size
-        noise_pattern = cv2.resize(noise_pattern, (width, height))
+        # Splice the noise pattern to ensure it matches the image size
+        noise_pattern = self.splice_noise_pattern(noise_pattern, height, width)
 
         # Blend the blurred image with the fixed noise pattern using opacity
         tinted_blurred_img = cv2.addWeighted(blurred_img, p["opacity"], noise_pattern, 1 - p["opacity"], 0)
