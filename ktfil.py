@@ -30,15 +30,15 @@ class VideoProcessor(VideoProcessorBase):
     
         # Define parameters for each filter type
         params = {
-            "Early Stage": {"opacity": 0.25, "blur_radius": 31},
-            "Middle Stage": {"opacity": 0.2, "blur_radius": 61},
-            "Late Stage": {"opacity": 0.15, "blur_radius": 91}
+            "Early Stage": {"opacity": 0.25, "blur_radius": 31, "outer_blur_radius": 21},
+            "Middle Stage": {"opacity": 0.2, "blur_radius": 61, "outer_blur_radius": 51},
+            "Late Stage": {"opacity": 0.15, "blur_radius": 91, "outer_blur_radius": 81}
         }
     
         p = params.get(filter_type)
     
         # Apply Gaussian blur to the image
-        blurred_img = cv2.GaussianBlur(img, (p["blur_radius"], p["blur_radius"]), 0)
+        blurred_img = cv2.GaussianBlur(img, (p["blur_radius"], p["outer_blur_radius"]), 0)
 
         # Ensure the noise pattern matches the image size
         noise_pattern = cv2.resize(noise_pattern, (width, height))
