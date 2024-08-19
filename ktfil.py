@@ -20,7 +20,7 @@ class VideoProcessor(VideoProcessorBase):
 
     def generate_fixed_noise_pattern(self, height, width):
         base_tint_color = 128
-        noise_intensity = 5  # Adjust this to control how strong the variation is
+        noise_intensity = 3  # Adjust this to control how strong the variation is
         random_noise = np.random.randint(-noise_intensity, noise_intensity, (height, width, 3), dtype=np.int16)
         noise_pattern = np.clip(base_tint_color + random_noise, 0, 255).astype(np.uint8)
         return noise_pattern
