@@ -41,8 +41,7 @@ class VideoProcessor(VideoProcessorBase):
         blurred_img = cv2.GaussianBlur(img, (p["blur_radius"], p["outer_blur_radius"]), 0)
 
         # Ensure the noise pattern matches the image size
-        split_point = int((line_position / 100) * width)
-        noise_pattern = noise_pattern[:, split_point:]
+        noise_pattern = cv2.resize(noise_pattern, (width, height))
 
         # Blend the blurred image with the fixed noise pattern using opacity
         tinted_blurred_img = cv2.addWeighted(blurred_img, p["opacity"], noise_pattern, 1 - p["opacity"], 0)
