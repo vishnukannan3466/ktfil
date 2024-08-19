@@ -20,7 +20,7 @@ class VideoProcessor(VideoProcessorBase):
 
     def generate_fixed_noise_pattern(self, height, width):
         base_tint_color = 128
-        noise_intensity = 10  # Adjust this to control how strong the variation is
+        noise_intensity = 5  # Adjust this to control how strong the variation is
         random_noise = np.random.randint(-noise_intensity, noise_intensity, (height, width, 3), dtype=np.int16)
         noise_pattern = np.clip(base_tint_color + random_noise, 0, 255).astype(np.uint8)
         return noise_pattern
@@ -31,8 +31,8 @@ class VideoProcessor(VideoProcessorBase):
         # Define parameters for each filter type
         params = {
             "Early Stage": {"opacity": 0.25, "blur_radius": 31},
-            "Middle Stage": {"opacity": 0.2, "blur_radius": 71},
-            "Late Stage": {"opacity": 0.12, "blur_radius": 101}
+            "Middle Stage": {"opacity": 0.2, "blur_radius": 61},
+            "Late Stage": {"opacity": 0.15, "blur_radius": 91}
         }
     
         p = params.get(filter_type)
@@ -65,7 +65,7 @@ class VideoProcessor(VideoProcessorBase):
             right_half = self.apply_filter_to_area(img, filter, self.noise_pattern)[:, split_point:]
 
         img = np.concatenate((left_half, right_half), axis=1)
-        cv2.line(img, (split_point, 0), (split_point, height), (255, 255, 255), 3)
+        cv2.line(img, (split_point, 0), (split_point, height), (255, 255, 255), 1)
 
         # Convert image back to VideoFrame
         video_frame = av.VideoFrame.from_ndarray(img, format="bgr24")
