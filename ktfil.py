@@ -12,7 +12,7 @@ line_position = st.slider("Adjust Filter Position", min_value=0, max_value=100, 
 filter_options = ["Healthy Eye", "Early Stage", "Middle Stage", "Late Stage"]
 filter = st.selectbox("Select Severity", filter_options, index=0)
 
-st.logo("https://keralink.org/wp-content/uploads/2024/11/logo.png", link="https://www.keralink.org/")
+st.logo("https://images.squarespace-cdn.com/content/v1/59f25d92a803bb45e568bd47/26929046-2567-48ce-b91c-60339b0f52e3/Keralink+Square-02.png", link="https://www.keralink.org/")
 class VideoProcessor(VideoProcessorBase):
     def __init__(self):
         self.noise_pattern = None
